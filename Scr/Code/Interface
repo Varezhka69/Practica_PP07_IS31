@@ -1,0 +1,77 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            NewMethod1();
+        }
+
+        private Button addButton;
+        private Button deleteButton;
+
+        private void NewMethod1()
+        {
+            this.addButton = new Button();
+            this.deleteButton = new Button();
+
+            this.addButton.Location = new System.Drawing.Point(80, 50);
+            this.addButton.Name = "addButton";
+            this.addButton.Size = new System.Drawing.Size(170, 60);
+            this.addButton.TabIndex = 0;
+            this.addButton.Text = "Добавить дефект";
+            this.addButton.UseVisualStyleBackColor = true;
+            this.addButton.Click += new EventHandler(AddButton_Click);
+
+            this.deleteButton.Location = new System.Drawing.Point(120, 140);
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(170, 60);
+            this.deleteButton.TabIndex = 1;
+            this.deleteButton.Text = "Удалить дефект";
+            this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new EventHandler(DeleteButton_Click);
+
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(400, 300);
+            this.Controls.Add(this.addButton);
+            this.Controls.Add(this.deleteButton);
+            this.Name = "Form1";
+            this.Text = "Данные о дефектах";
+            this.ResumeLayout(false);
+        }
+
+        private void AddButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Информация о добавлении нового дефекта.");
+        }
+
+        private void DeleteButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Информация об удалении дефекта.");
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            this.ClientSize = new System.Drawing.Size(403, 244);
+            this.Name = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.ResumeLayout(false);
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
