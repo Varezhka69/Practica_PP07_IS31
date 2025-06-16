@@ -14,46 +14,13 @@ namespace WindowsFormsApp1
     {
         public Form1()
         {
-            NewMethod1();
-        }
-
-        private Button addButton;
-        private Button deleteButton;
-
-        private void NewMethod1()
-        {
-            this.addButton = new Button();
-            this.deleteButton = new Button();
-
-            this.addButton.Location = new System.Drawing.Point(80, 50);
-            this.addButton.Name = "addButton";
-            this.addButton.Size = new System.Drawing.Size(170, 60);
-            this.addButton.TabIndex = 0;
-            this.addButton.Text = "Добавить дефект";
-            this.addButton.UseVisualStyleBackColor = true;
-            this.addButton.Click += new EventHandler(AddButton_Click);
-
-            this.deleteButton.Location = new System.Drawing.Point(120, 140);
-            this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(170, 60);
-            this.deleteButton.TabIndex = 1;
-            this.deleteButton.Text = "Удалить дефект";
-            this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Click += new EventHandler(DeleteButton_Click);
-
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(400, 300);
-            this.Controls.Add(this.addButton);
-            this.Controls.Add(this.deleteButton);
-            this.Name = "Form1";
-            this.Text = "Данные о дефектах";
-            this.ResumeLayout(false);
+            InitializeComponent();
         }
 
         private void AddButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Информация о добавлении нового дефекта.");
+            DefectForm defectForm = new DefectForm();
+            defectForm.ShowDialog(); 
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
@@ -61,17 +28,133 @@ namespace WindowsFormsApp1
             MessageBox.Show("Информация об удалении дефекта.");
         }
 
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            this.ClientSize = new System.Drawing.Size(403, 244);
-            this.Name = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.ResumeLayout(false);
-        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private Button addButton;
+        private Button deleteButton;
+        private void InitializeComponent()
+        {
+            this.addButton = new System.Windows.Forms.Button();
+            this.deleteButton = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+           
+            this.addButton.Location = new System.Drawing.Point(80, 50);
+            this.addButton.Name = "addButton";
+            this.addButton.Size = new System.Drawing.Size(128, 54);
+            this.addButton.TabIndex = 0;
+            this.addButton.Text = "Добавить дефект";
+            this.addButton.UseVisualStyleBackColor = true;
+            this.addButton.Click += new System.EventHandler(this.AddButton_Click);
+            
+            this.deleteButton.Location = new System.Drawing.Point(160, 133);
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(128, 54);
+            this.deleteButton.TabIndex = 1;
+            this.deleteButton.Text = "Удалить дефект";
+            this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
+            
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(400, 250);
+            this.Controls.Add(this.deleteButton);
+            this.Controls.Add(this.addButton);
+            this.Name = "Form1";
+            this.Text = "Данные о дефектах";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.ResumeLayout(false);
+
+        }
+    }
+    public partial class DefectForm : Form
+    {
+        private TextBox fabricNameTextBox;
+        private TextBox defectTypeTextBox;
+        private TextBox locationTextBox;
+        private Button saveButton;
+        private Button cancelButton;
+
+        public DefectForm()
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.fabricNameTextBox = new TextBox();
+            this.defectTypeTextBox = new TextBox();
+            this.locationTextBox = new TextBox();
+            this.saveButton = new Button();
+            this.cancelButton = new Button();
+            this.SuspendLayout();
+            
+            this.fabricNameTextBox.Location = new System.Drawing.Point(12, 25);
+            this.fabricNameTextBox.Name = "fabricNameTextBox";
+            this.fabricNameTextBox.Size = new System.Drawing.Size(260, 20);
+            this.fabricNameTextBox.TabIndex = 0;
+            this.fabricNameTextBox.Text = "Название ткани";
+            
+            this.defectTypeTextBox.Location = new System.Drawing.Point(12, 64);
+            this.defectTypeTextBox.Name = "defectTypeTextBox";
+            this.defectTypeTextBox.Size = new System.Drawing.Size(260, 20);
+            this.defectTypeTextBox.TabIndex = 1;
+            this.defectTypeTextBox.Text = "Тип дефекта";
+            
+            this.locationTextBox.Location = new System.Drawing.Point(12, 103);
+            this.locationTextBox.Name = "locationTextBox";
+            this.locationTextBox.Size = new System.Drawing.Size(260, 20);
+            this.locationTextBox.TabIndex = 2;
+            this.locationTextBox.Text = "Местоположение";
+           
+            this.saveButton.Location = new System.Drawing.Point(12, 147);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(100, 30);
+            this.saveButton.TabIndex = 3;
+            this.saveButton.Text = "Сохранить";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.SaveButton_Click);
+                        this.cancelButton.Location = new System.Drawing.Point(172, 147);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(100, 30);
+            this.cancelButton.TabIndex = 4;
+            this.cancelButton.Text = "Отмена";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
+           
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(284, 200);
+            this.Controls.Add(this.fabricNameTextBox);
+            this.Controls.Add(this.defectTypeTextBox);
+            this.Controls.Add(this.locationTextBox);
+            this.Controls.Add(this.saveButton);
+            this.Controls.Add(this.cancelButton);
+            this.Name = "DefectForm";
+            this.Text = "Добавить дефект";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            
+            string fabricName = fabricNameTextBox.Text;
+            string defectType = defectTypeTextBox.Text;
+            string location = locationTextBox.Text;
+
+            MessageBox.Show($"Ткань: {fabricName}, Дефект: {defectType}, Местоположение: {location}");
+
+            this.Close(); 
+        }
+
+        private void CancelButton_Click(object sender, EventArgs e)
+        {
+            this.Close(); 
         }
     }
 }
