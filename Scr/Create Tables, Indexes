@@ -1,0 +1,68 @@
+CREATE TABLE Smartphone (
+    ID_Smartphone INT PRIMARY KEY,
+    Model VARCHAR(255) NOT NULL,
+    Manufacturer VARCHAR(255) NOT NULL,
+    Number VARCHAR(225) UNIQUE NOT NULL,
+    Production_date DATE NOT NULL,
+    ID_Party INT NOT NULL 
+);
+
+CREATE TABLE Screen (
+    ID_Screen INT PRIMARY KEY,
+    ID_Smartphone INT NOT NULL,
+    Material VARCHAR(255) NOT NULL,
+    Supplier VARCHAR(255) NOT NULL,
+    Installation_date DATE NOT NULL
+);
+
+CREATE TABLE Image (
+    ID_Image INT PRIMARY KEY,
+    ID_Defect INT NOT NULL,
+    File_path VARCHAR(225) NOT NULL
+);
+
+CREATE TABLE Party (
+    ID_Party INT PRIMARY KEY,
+    Number VARCHAR(225) UNIQUE NOT NULL,
+    Production_date DATE NOT NULL,
+    Quantity INT NOT NULL
+);
+
+CREATE TABLE Defect (
+    ID_Defect INT PRIMARY KEY,
+    ID_Screen INT NOT NULL,
+    Typе VARCHAR(255) NOT NULL,
+    Size INT NULL,
+    Coordinates VARCHAR(255) NULL,
+    Date_discovery DATE NOT NULL,
+    ID_Controler INT NOT NULL
+);
+
+CREATE TABLE Controler (
+    ID_Controler INT PRIMARY KEY,
+    Namе VARCHAR(255) NOT NULL,
+    Surname VARCHAR(255) NOT NULL
+);
+
+
+ALTER TABLE Smartphone
+ADD CONSTRAINT FK_Smartphone_Party FOREIGN KEY (ID_Party) REFERENCES Party(ID_Party);
+
+ALTER TABLE Screen
+ADD CONSTRAINT FK_Screen_Smartphone FOREIGN KEY (ID_Smartphone) REFERENCES Smartphone(ID_Smartphone);
+
+ALTER TABLE Image
+ADD CONSTRAINT FK_Image_Defect FOREIGN KEY (ID_Defect) REFERENCES Defect(ID_Defect);
+
+ALTER TABLE Defect
+ADD CONSTRAINT FK_Defect_Screen FOREIGN KEY (ID_Screen) REFERENCES Screen(ID_Screen);
+
+ALTER TABLE Defect
+ADD CONSTRAINT FK_Defect_Controler FOREIGN KEY (ID_Controler) REFERENCES Controler(ID_Controler);
+
+
+CREATE INDEX IX_Smartphone_Model ON Smartphone (Model);
+CREATE INDEX IX_Screen_Smartphone ON Screen (ID_Smartphone);
+CREATE INDEX IX_Defect_Screen ON Defect (ID_Screen);
+CREATE INDEX IX_Defect_Controler ON Defect (ID_Controler);
+CREATE INDEX IX_Party_ProductionDate ON Party (Production_date); 
