@@ -23,7 +23,6 @@ namespace SmartphoneDefectsDatabase
             this.Size = new System.Drawing.Size(600, 400);
             this.StartPosition = FormStartPosition.CenterParent;
 
-            // Панель кнопок
             var panel = new Panel
             {
                 Dock = DockStyle.Top,
@@ -42,7 +41,6 @@ namespace SmartphoneDefectsDatabase
             panel.Controls.AddRange(new Control[] { btnAdd, btnEdit, btnDelete });
             this.Controls.Add(panel);
 
-            // DataGridView
             dataGridView = new DataGridView
             {
                 Dock = DockStyle.Fill,
@@ -66,7 +64,6 @@ namespace SmartphoneDefectsDatabase
                 dataGridView.Columns["RoleID"].Visible = false;
                 dataGridView.Columns["Users"].Visible = false;
 
-                // Настройка заголовков
                 dataGridView.Columns["RoleName"].HeaderText = "Название роли";
                 dataGridView.Columns["Description"].HeaderText = "Описание";
             }
@@ -126,7 +123,6 @@ namespace SmartphoneDefectsDatabase
             {
                 var selectedRole = dataGridView.SelectedRows[0].DataBoundItem as Role;
 
-                // Проверяем, есть ли пользователи с этой ролью
                 var usersWithRole = dbContext.Users.Any(u => u.RoleID == selectedRole.RoleID);
                 if (usersWithRole)
                 {
