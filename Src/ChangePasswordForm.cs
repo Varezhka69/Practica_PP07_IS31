@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace SmartphoneDefectsDatabase
+namespace SmartphoneDefectsDatabase1
 {
     public partial class ChangePasswordForm : Form
     {
