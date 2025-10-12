@@ -127,22 +127,23 @@ namespace SmartphoneDefectsDatabase1
                 case "Defects":
                     return new Defect
                     {
-                        DetectionDate = DateTime.Now,
+                        DiscoveryDate = DateTime.Now,
                         Type = "Царапина",
-                        Severity = "Легкий"
+                        Size = "Легкий",
+                        Coordinates = "Центр"
                     };
                 case "Parties":
                     return new Party
                     {
                         ArrivalDate = DateTime.Today,
-                        PartyName = "Новая партия",
+                        Name = "Новая партия",
                         Quantity = 1
                     };
                 case "Controllers":
                     return new Controller
                     {
                         Name = "Новый контроллер",
-                        Login = "user"
+                        Surname = "Абвгд"
                     };
                 case "Images":
                     return new Image
@@ -211,15 +212,15 @@ namespace SmartphoneDefectsDatabase1
                 }
                 else
                 {
-                    dateValue = DateTime.Today; // Устанавливаем текущую дату по умолчанию
+                    dateValue = DateTime.Today;
                 }
 
                 return new DateTimePicker
                 {
                     Value = dateValue,
                     Format = DateTimePickerFormat.Short,
-                    MinDate = new DateTime(2000, 1, 1), // Минимальная дата
-                    MaxDate = DateTime.Today.AddYears(1) // Максимальная дата
+                    MinDate = new DateTime(2000, 1, 1),
+                    MaxDate = DateTime.Today.AddYears(1)
                 };
             }
             else if (prop.PropertyType == typeof(bool))
@@ -247,19 +248,20 @@ namespace SmartphoneDefectsDatabase1
             var displayNames = new System.Collections.Generic.Dictionary<string, string>
             {
                 { "Model", "Модель" },
-                { "SerialNumber", "Серийный номер" },
+                { "Manufacture", "Производство" },
+                { "Number", "Серийный номер" },
                 { "ProductionDate", "Дата производства" },
-                { "ScreenType", "Тип экрана" },
+                { "Material", "Материал экрана" },
                 { "Size", "Размер" },
-                { "DefectType", "Тип дефекта" },
-                { "Severity", "Серьезность" },
-                { "Location", "Расположение" },
-                { "DetectionDate", "Дата обнаружения" },
-                { "PartyName", "Название партии" },
+                { "Supplier", "Поставщик" },
+                { "Size", "Размер" },
+                { "Coordinates", "Расположение" },
+                { "DiscoveryDate", "Дата обнаружения" },
+                { "Name", "Название партии" },
                 { "ArrivalDate", "Дата поступления" },
                 { "Quantity", "Количество" },
                 { "Name", "Имя" },
-                { "Login", "Логин" },
+                { "Surname", "Фамилия" },
                 { "FileName", "Имя файла" }
             };
 
@@ -270,7 +272,6 @@ namespace SmartphoneDefectsDatabase1
         {
             try
             {
-                // Собираем значения из контролов
                 foreach (Control control in GetAllControls(this))
                 {
                     if (control.Tag is PropertyInfo prop)
@@ -280,7 +281,6 @@ namespace SmartphoneDefectsDatabase1
                     }
                 }
 
-                // Добавляем новую сущность в контекст, если это новая запись
                 if (IsNewEntity())
                 {
                     AddEntityToContext();
@@ -296,7 +296,7 @@ namespace SmartphoneDefectsDatabase1
             {
                 MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.DialogResult = DialogResult.None; // Не закрываем форму при ошибке
+                this.DialogResult = DialogResult.None;
             }
         }
 
@@ -340,14 +340,13 @@ namespace SmartphoneDefectsDatabase1
                 }
                 else if (control is DateTimePicker dateTimePicker)
                 {
-                    // Проверяем, что дата в допустимом диапазоне
                     if (dateTimePicker.Value >= dateTimePicker.MinDate && dateTimePicker.Value <= dateTimePicker.MaxDate)
                     {
                         return dateTimePicker.Value;
                     }
                     else
                     {
-                        return DateTime.Today; // Возвращаем текущую дату если значение вне диапазона
+                        return DateTime.Today;
                     }
                 }
                 else if (control is CheckBox checkBox)
