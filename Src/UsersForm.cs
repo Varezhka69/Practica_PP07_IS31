@@ -1,12 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows.Forms;
-using System.Data.Entity;
 
-namespace SmartphoneDefectsDatabase
+namespace SmartphoneDefectsDatabase1
 {
     public partial class UsersForm : Form
     {
+        private const string V = "Role.RoleName";
         private DefectContext dbContext;
         private DataGridView dataGridView;
         private Button btnAdd, btnEdit, btnDelete, btnChangePassword;
@@ -15,7 +17,7 @@ namespace SmartphoneDefectsDatabase
         {
             dbContext = context;
             InitializeCustomComponents();
-            LoadData();
+            LoadData(GetDataGridView());
         }
 
         private void InitializeCustomComponents()
@@ -44,6 +46,7 @@ namespace SmartphoneDefectsDatabase
             panel.Controls.AddRange(new Control[] { btnAdd, btnEdit, btnDelete, btnChangePassword });
             this.Controls.Add(panel);
 
+            // DataGridView
             dataGridView = new DataGridView
             {
                 Dock = DockStyle.Fill,
@@ -59,29 +62,44 @@ namespace SmartphoneDefectsDatabase
             this.Controls.Add(dataGridView);
         }
 
-        private void LoadData()
+        private DataGridView GetDataGridView()
+        {
+            return dataGridView;
+        }
+
+        private void LoadData(DataGridView dataGridView)
         {
             try
             {
-                dataGridView.DataSource = dbContext.Users.Include(u => u.Role).ToList();
-                dataGridView.Columns["UserID"].Visible = false;
-                dataGridView.Columns["Password"].Visible = false;
-                dataGridView.Columns["RoleID"].Visible = false;
-                dataGridView.Columns["Role"].Visible = false;
+                    dataGridView.DataSource = dbContext.Users.Include(u => u.Role).ToList();
+                    string[] hiddenColumns = { "UserID", "Password", "RoleID", "Role" };
+                    foreach (string colName in hiddenColumns)
+                    {
+                        if (dataGridView.Columns.Contains(colName))
+                            dataGridView.Columns[colName].Visible = false;
+                    }
 
-                // Настройка заголовков
-                dataGridView.Columns["Username"].HeaderText = "Логин";
-                dataGridView.Columns["FullName"].HeaderText = "ФИО";
-                dataGridView.Columns["Email"].HeaderText = "Email";
-                dataGridView.Columns["IsActive"].HeaderText = "Активен";
-                dataGridView.Columns["Role.RoleName"].HeaderText = "Роль";
-                dataGridView.Columns["CreatedDate"].HeaderText = "Дата создания";
+                    var columnMappings = new Dictionary<string, string>
+        {
+            { "Username", "Логин" },
+            { "FullName", "ФИО" },
+            { "Email", "Email" },
+            { "IsActive", "Активен" },
+            { "Role.RoleName", "Роль" },
+            { "CreatedDate", "Дата создания" }
+        };
+
+                    foreach (var mapping in columnMappings)
+                    {
+                        if (dataGridView.Columns.Contains(mapping.Key))
+                            dataGridView.Columns[mapping.Key].HeaderText = mapping.Value;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка загрузки данных: {ex.Message}");
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка загрузки данных: {ex.Message}");
-            }
-        }
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
@@ -93,7 +111,7 @@ namespace SmartphoneDefectsDatabase
                 {
                     dbContext.Users.Add(user);
                     dbContext.SaveChanges();
-                    LoadData();
+                    LoadData(GetDataGridView());
                 }
             }
             catch (Exception ex)
@@ -113,7 +131,7 @@ namespace SmartphoneDefectsDatabase
                     if (editForm.ShowDialog() == DialogResult.OK)
                     {
                         dbContext.SaveChanges();
-                        LoadData();
+                        LoadData(GetDataGridView());
                     }
                 }
                 catch (Exception ex)
@@ -140,7 +158,7 @@ namespace SmartphoneDefectsDatabase
                     {
                         dbContext.Users.Remove(selectedUser);
                         dbContext.SaveChanges();
-                        LoadData();
+                        LoadData(GetDataGridView());
                     }
                     catch (Exception ex)
                     {
