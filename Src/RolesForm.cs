@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace SmartphoneDefectsDatabase
+namespace SmartphoneDefectsDatabase1
 {
     public partial class RolesForm : Form
     {
