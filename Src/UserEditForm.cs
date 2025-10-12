@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Windows.Forms;
 
-namespace SmartphoneDefectsDatabase
+namespace SmartphoneDefectsDatabase1
 {
     public partial class UserEditForm : Form
     {
@@ -127,7 +127,6 @@ namespace SmartphoneDefectsDatabase
 
         private void LoadData()
         {
-
             var roles = dbContext.Roles.ToList();
             cmbRole.DataSource = roles;
             cmbRole.DisplayMember = "RoleName";
