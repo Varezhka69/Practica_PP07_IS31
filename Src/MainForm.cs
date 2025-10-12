@@ -3,7 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace SmartphoneDefectsDatabase
+namespace SmartphoneDefectsDatabase1
 {
     public partial class MainForm : Form
     {
@@ -13,18 +13,10 @@ namespace SmartphoneDefectsDatabase
 
         public MainForm()
         {
-            InitializeCustomComponents(); // Заменили на кастомный метод
+            InitializeComponent();
             InitializeDatabase();
             InitializeMenu();
             InitializeTabs();
-        }
-
-        private void InitializeCustomComponents()
-        {
-            // Базовая настройка формы
-            this.Text = "База данных обнаружения дефектов смартфонов";
-            this.Size = new System.Drawing.Size(1000, 700);
-            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         private void InitializeDatabase()
@@ -33,39 +25,62 @@ namespace SmartphoneDefectsDatabase
             {
                 dbContext = new DefectContext();
 
-                // Простая проверка подключения
-                bool canConnect = dbContext.Database.Exists();
+                if (!dbContext.Database.Exists() || ShouldRecreateDatabase())
+                {
+                    if (dbContext.Database.Exists())
+                    {
+                        dbContext.Database.Delete();
+                    }
 
-                if (canConnect)
-                {
-                    // Проверяем существование основных таблиц
-                    CheckTablesExist();
-                    MessageBox.Show("Подключение к БД успешно!", "Информация");
-                }
-                else
-                {
-                    MessageBox.Show("Не удалось подключиться к базе данных. Проверьте строку подключения.", "Ошибка");
+                    dbContext.Database.Create();
+
+                    SeedInitialData();
+
+                    MessageBox.Show("База данных создана. Логин: admin, Пароль: admin123", "Информация");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка подключения к БД: {ex.Message}", "Ошибка");
+                MessageBox.Show($"Ошибка инициализации базы данных: {ex.Message}\n\nРекомендуется удалить существующую базу данных и запустить приложение заново.", "Ошибка");
             }
         }
 
-        private void CheckTablesExist()
+        private bool ShouldRecreateDatabase()
         {
             try
             {
-                // Простая проверка - пытаемся получить count из таблиц
-                var smartphoneCount = dbContext.Smartphones.Count();
-                var roleCount = dbContext.Roles.Count();
-                Console.WriteLine("Таблицы доступны");
+                var testRoles = dbContext.Roles.Any();
+                var testUsers = dbContext.Users.Any();
+                return false;
             }
             catch
             {
-                MessageBox.Show("Некоторые таблицы отсутствуют в базе данных. Выполните SQL скрипт для создания таблиц.", "Предупреждение");
+                return true;
             }
+        }
+
+        private void SeedInitialData()
+        {
+            var adminRole = new Role { RoleName = "Администратор", Description = "Полный доступ ко всем функциям" };
+            var userRole = new Role { RoleName = "Пользователь", Description = "Базовый доступ" };
+            var inspectorRole = new Role { RoleName = "Инспектор", Description = "Доступ к проверке дефектов" };
+
+            dbContext.Roles.Add(adminRole);
+            dbContext.Roles.Add(userRole);
+            dbContext.Roles.Add(inspectorRole);
+
+            var adminUser = new User
+            {
+                Username = "admin",
+                Password = "admin123",
+                FullName = "Администратор системы",
+                Email = "admin@system.com",
+                Role = adminRole
+            };
+
+            dbContext.Users.Add(adminUser);
+
+            dbContext.SaveChanges();
         }
 
         private void InitializeMenu()
@@ -77,11 +92,11 @@ namespace SmartphoneDefectsDatabase
             settingsMenu.DropDownItems.Add("Тест подключения", null, TestConnection_Click);
 
             var tablesMenu = new ToolStripMenuItem("Таблицы");
-            tablesMenu.DropDownItems.Add("Партии", null, (s, e) => ShowTable("Parties"));
             tablesMenu.DropDownItems.Add("Смартфоны", null, (s, e) => ShowTable("Smartphones"));
-            tablesMenu.DropDownItems.Add("Контроллеры", null, (s, e) => ShowTable("Controllers"));
             tablesMenu.DropDownItems.Add("Экраны", null, (s, e) => ShowTable("Screens"));
             tablesMenu.DropDownItems.Add("Дефекты", null, (s, e) => ShowTable("Defects"));
+            tablesMenu.DropDownItems.Add("Партии", null, (s, e) => ShowTable("Party"));
+            tablesMenu.DropDownItems.Add("Контроллеры", null, (s, e) => ShowTable("Controllers"));
             tablesMenu.DropDownItems.Add("Изображения", null, (s, e) => ShowTable("Images"));
 
             var usersMenu = new ToolStripMenuItem("Пользователи");
@@ -134,10 +149,8 @@ namespace SmartphoneDefectsDatabase
 
         private void ShowTable(string tableName)
         {
-            // Устанавливаем заголовок окна
             this.Text = $"База данных дефектов - {tableName}";
 
-            // Создаем или активируем вкладку для таблицы
             var existingTab = tabControl.TabPages.Cast<TabPage>()
                 .FirstOrDefault(tp => tp.Text == tableName);
 
