@@ -2,7 +2,7 @@ using System;
 using System.Windows.Forms;
 using System.Configuration;
 
-namespace SmartphoneDefectsDatabase
+namespace SmartphoneDefectsDatabase1
 {
     public partial class ConnectionSettingsForm : Form
     {
@@ -10,7 +10,7 @@ namespace SmartphoneDefectsDatabase
 
         public ConnectionSettingsForm()
         {
-            InitializeCustomComponents(); 
+            InitializeCustomComponents();
             LoadCurrentSettings();
         }
 
@@ -32,7 +32,6 @@ namespace SmartphoneDefectsDatabase
                 AutoSize = true
             };
 
-            // Настройка колонок
             mainPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             mainPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
 
@@ -213,7 +212,6 @@ namespace SmartphoneDefectsDatabase
         {
             try
             {
-
                 if (string.IsNullOrWhiteSpace(txtServer.Text))
                 {
                     MessageBox.Show("Введите имя сервера", "Ошибка",
@@ -249,12 +247,10 @@ namespace SmartphoneDefectsDatabase
         {
             if (string.IsNullOrWhiteSpace(txtUser.Text) && string.IsNullOrWhiteSpace(txtPassword.Text))
             {
-                // Integrated Security
                 return $"Data Source={txtServer.Text};Initial Catalog={txtDatabase.Text};Integrated Security=True;MultipleActiveResultSets=True";
             }
             else
             {
-                // SQL Server Authentication
                 return $"Data Source={txtServer.Text};Initial Catalog={txtDatabase.Text};User Id={txtUser.Text};Password={txtPassword.Text};MultipleActiveResultSets=True";
             }
         }
