@@ -1,33 +1,29 @@
 using System;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Linq;
+using System.Windows.Forms;
 using System.Reflection;
-using System.Windows.Forms;
-using System.Windows.Forms;
 
-namespace SmartphoneDefectsDatabase
+namespace SmartphoneDefectsDatabase1
 {
     public partial class EditForm : Form
     {
         private DefectContext dbContext;
         private string tableName;
         private object entity;
-        
+
         public EditForm(DefectContext context, string table, object item = null)
         {
             dbContext = context;
             tableName = table;
             entity = item ?? CreateNewEntity();
-            InitializeCustomComponents(); // Изменили название метода
+            InitializeCustomComponents();
         }
 
         private void InitializeCustomComponents()
         {
             this.Text = $"Редактирование - {tableName}";
-            this.Size = new System.Drawing.Size(800, 600);
+            this.Size = new System.Drawing.Size(800, 350);
             this.StartPosition = FormStartPosition.CenterParent;
 
             var properties = entity.GetType().GetProperties()
@@ -48,9 +44,8 @@ namespace SmartphoneDefectsDatabase
                 AutoScroll = true
             };
 
-            tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F)); // Метки
-            tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 450F)); // Поля ввода
-
+            tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
+            tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 450F));
             for (int i = 0; i < properties.Count; i++)
             {
                 var prop = properties[i];
@@ -86,8 +81,8 @@ namespace SmartphoneDefectsDatabase
             {
                 Text = "OK",
                 DialogResult = DialogResult.OK,
-                Location = new System.Drawing.Point(500, 10),
-                Size = new System.Drawing.Size(95, 35),
+                Location = new System.Drawing.Point(400, 10),
+                Size = new System.Drawing.Size(100, 35),
                 Font = new System.Drawing.Font("Microsoft Sans Serif", 10F)
             };
 
@@ -95,8 +90,8 @@ namespace SmartphoneDefectsDatabase
             {
                 Text = "Отмена",
                 DialogResult = DialogResult.Cancel,
-                Location = new System.Drawing.Point(610, 10),
-                Size = new System.Drawing.Size(95, 35),
+                Location = new System.Drawing.Point(550, 10),
+                Size = new System.Drawing.Size(100, 35),
                 Font = new System.Drawing.Font("Microsoft Sans Serif", 10F)
             };
 
@@ -117,22 +112,43 @@ namespace SmartphoneDefectsDatabase
         {
             switch (tableName)
             {
-                case "Parties":
-                    return new Party { Number = "P" + DateTime.Now.ToString("yyyy-MM-001"), Quantity = 1 };
                 case "Smartphones":
-                    return new Smartphone { Model = "Новая модель", Number = "SN" + DateTime.Now.ToString("yyyyMMdd-001") };
-                case "Controllers":  // Используем Controllers вместо Operators
-                    return new Controller { Name = "Имя", Surname = "Фамилия" };
+                    return new Smartphone
+                    {
+                        ProductionDate = DateTime.Today,
+                        Model = "Новая модель",
+                        Number = "SN000001"
+                    };
                 case "Screens":
-                    return new Screen { Material = "Стекло", Supplier = "Поставщик" };
+                    return new Screen
+                    {
+                        Type = "OLED"
+                    };
                 case "Defects":
-                    return new Defect { Type = "Царапина", Size = 0.1m, Coordinates = "X:0,Y:0" };
+                    return new Defect
+                    {
+                        DetectionDate = DateTime.Now,
+                        Type = "Царапина",
+                        Severity = "Легкий"
+                    };
+                case "Parties":
+                    return new Party
+                    {
+                        ArrivalDate = DateTime.Today,
+                        PartyName = "Новая партия",
+                        Quantity = 1
+                    };
+                case "Controllers":
+                    return new Controller
+                    {
+                        Name = "Новый контроллер",
+                        Login = "user"
+                    };
                 case "Images":
-                    return new Image { FilePath = "C:\\Images\\" };
-                case "Roles":
-                    return new Role { RoleName = "Новая роль" };
-                case "Users":
-                    return new User { Username = "newuser", FullName = "Новый пользователь", Password = "password" };
+                    return new Image
+                    {
+                        FileName = "image.jpg"
+                    };
                 default:
                     throw new ArgumentException($"Неизвестная таблица: {tableName}");
             }
@@ -141,40 +157,41 @@ namespace SmartphoneDefectsDatabase
         private void CreateInputFields(FlowLayoutPanel panel)
         {
             var properties = entity.GetType().GetProperties()
-                .Where(p => p.CanWrite && 
-                           !p.Name.EndsWith("ID") && 
+                .Where(p => p.CanWrite &&
+                           !p.Name.EndsWith("ID") &&
                            p.Name != "ID" &&
-                           p.Name != "Smartphone" && 
-                           p.Name != "Screen" && 
+                           p.Name != "Smartphone" &&
+                           p.Name != "Screen" &&
                            p.Name != "Defect")
                 .ToList();
-                
+
             foreach (var prop in properties)
             {
-                var fieldPanel = new Panel 
-                { 
-                    Width = panel.Width - 25, 
+                // Создаем панель для каждой пары Label + Control
+                var fieldPanel = new Panel
+                {
+                    Width = panel.Width - 25,
                     Height = 60,
                     Margin = new Padding(0, 5, 0, 5)
                 };
-                
-                var label = new Label 
-                { 
+
+                var label = new Label
+                {
                     Text = GetDisplayName(prop.Name),
                     Location = new System.Drawing.Point(0, 5),
                     Width = 150,
                     Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular)
                 };
-                
+
                 Control inputControl = CreateInputControl(prop);
                 inputControl.Location = new System.Drawing.Point(160, 3);
                 inputControl.Width = 200;
                 inputControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular);
                 inputControl.Tag = prop;
-                
+
                 fieldPanel.Controls.Add(label);
                 fieldPanel.Controls.Add(inputControl);
-                
+
                 panel.Controls.Add(fieldPanel);
             }
         }
@@ -182,13 +199,27 @@ namespace SmartphoneDefectsDatabase
         private Control CreateInputControl(PropertyInfo prop)
         {
             var currentValue = prop.GetValue(entity);
-            
+
             if (prop.PropertyType == typeof(DateTime))
             {
-                return new DateTimePicker 
-                { 
-                    Value = currentValue != null ? (DateTime)currentValue : DateTime.Now,
-                    Format = DateTimePickerFormat.Short
+                DateTime dateValue;
+
+                if (currentValue != null && (DateTime)currentValue > DateTimePicker.MinimumDateTime &&
+                    (DateTime)currentValue < DateTimePicker.MaximumDateTime)
+                {
+                    dateValue = (DateTime)currentValue;
+                }
+                else
+                {
+                    dateValue = DateTime.Today; // Устанавливаем текущую дату по умолчанию
+                }
+
+                return new DateTimePicker
+                {
+                    Value = dateValue,
+                    Format = DateTimePickerFormat.Short,
+                    MinDate = new DateTime(2000, 1, 1), // Минимальная дата
+                    MaxDate = DateTime.Today.AddYears(1) // Максимальная дата
                 };
             }
             else if (prop.PropertyType == typeof(bool))
@@ -199,8 +230,8 @@ namespace SmartphoneDefectsDatabase
             }
             else if (prop.PropertyType == typeof(decimal) || prop.PropertyType == typeof(int))
             {
-                return new NumericUpDown 
-                { 
+                return new NumericUpDown
+                {
                     Value = currentValue != null ? Convert.ToDecimal(currentValue) : 0,
                     DecimalPlaces = prop.PropertyType == typeof(decimal) ? 2 : 0
                 };
@@ -231,98 +262,15 @@ namespace SmartphoneDefectsDatabase
                 { "Login", "Логин" },
                 { "FileName", "Имя файла" }
             };
-            
+
             return displayNames.ContainsKey(propertyName) ? displayNames[propertyName] : propertyName;
         }
-        private bool ValidateEntity()
-        {
-            var validationErrors = new List<string>();
 
-            if (entity is Smartphone smartphone)
-            {
-                if (string.IsNullOrWhiteSpace(smartphone.Model))
-                    validationErrors.Add("Модель: Обязательное поле");
-                if (string.IsNullOrWhiteSpace(smartphone.Manufacturer))
-                    validationErrors.Add("Производитель: Обязательное поле");
-                if (string.IsNullOrWhiteSpace(smartphone.Number))
-                    validationErrors.Add("Номер: Обязательное поле");
-                if (smartphone.PartyID == 0)
-                    validationErrors.Add("Партия: Необходимо выбрать партию");
-            }
-            else if (entity is Party party)
-            {
-                if (string.IsNullOrWhiteSpace(party.Number))
-                    validationErrors.Add("Номер партии: Обязательное поле");
-                if (party.Quantity <= 0)
-                    validationErrors.Add("Количество: Должно быть больше 0");
-            }
-            else if (entity is Controller controller)
-            {
-                if (string.IsNullOrWhiteSpace(controller.Name))
-                    validationErrors.Add("Имя: Обязательное поле");
-                if (string.IsNullOrWhiteSpace(controller.Surname))
-                    validationErrors.Add("Фамилия: Обязательное поле");
-            }
-            else if (entity is Screen screen)
-            {
-                if (string.IsNullOrWhiteSpace(screen.Material))
-                    validationErrors.Add("Материал: Обязательное поле");
-                if (string.IsNullOrWhiteSpace(screen.Supplier))
-                    validationErrors.Add("Поставщик: Обязательное поле");
-                if (screen.SmartphoneID == 0)
-                    validationErrors.Add("Смартфон: Необходимо выбрать смартфон");
-            }
-            else if (entity is Defect defect)
-            {
-                if (string.IsNullOrWhiteSpace(defect.Type))
-                    validationErrors.Add("Тип дефекта: Обязательное поле");
-                if (defect.Size <= 0)
-                    validationErrors.Add("Размер: Должен быть больше 0");
-                if (string.IsNullOrWhiteSpace(defect.Coordinates))
-                    validationErrors.Add("Координаты: Обязательное поле");
-                if (defect.ScreenID == 0)
-                    validationErrors.Add("Экран: Необходимо выбрать экран");
-                if (defect.ControllerID == 0)
-                    validationErrors.Add("Контроллер: Необходимо выбрать контроллера");
-            }
-            else if (entity is Image image)
-            {
-                if (string.IsNullOrWhiteSpace(image.FilePath))
-                    validationErrors.Add("Путь к файлу: Обязательное поле");
-                if (image.DefectID == 0)
-                    validationErrors.Add("Дефект: Необходимо выбрать дефект");
-            }
-            else if (entity is Role role)
-            {
-                if (string.IsNullOrWhiteSpace(role.RoleName))
-                    validationErrors.Add("Название роли: Обязательное поле");
-            }
-            else if (entity is User user)
-            {
-                if (string.IsNullOrWhiteSpace(user.Username))
-                    validationErrors.Add("Логин: Обязательное поле");
-                if (string.IsNullOrWhiteSpace(user.Password))
-                    validationErrors.Add("Пароль: Обязательное поле");
-                if (string.IsNullOrWhiteSpace(user.FullName))
-                    validationErrors.Add("ФИО: Обязательное поле");
-                if (user.RoleID == 0)
-                    validationErrors.Add("Роль: Необходимо выбрать роль");
-            }
-
-            if (validationErrors.Any())
-            {
-                string errorMessage = "Обнаружены ошибки:\n" + string.Join("\n", validationErrors);
-                MessageBox.Show(errorMessage, "Ошибки валидации", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-
-            return true;
-        }
         private void SaveChanges()
         {
             try
             {
-
+                // Собираем значения из контролов
                 foreach (Control control in GetAllControls(this))
                 {
                     if (control.Tag is PropertyInfo prop)
@@ -332,12 +280,7 @@ namespace SmartphoneDefectsDatabase
                     }
                 }
 
-                if (!ValidateEntity())
-                {
-                    this.DialogResult = DialogResult.None;
-                    return;
-                }
-
+                // Добавляем новую сущность в контекст, если это новая запись
                 if (IsNewEntity())
                 {
                     AddEntityToContext();
@@ -346,37 +289,21 @@ namespace SmartphoneDefectsDatabase
                 {
                     dbContext.Entry(entity).State = System.Data.Entity.EntityState.Modified;
                 }
+
                 dbContext.SaveChanges();
-                MessageBox.Show("Данные успешно сохранены!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
-            {
-                // Обработка ошибок валидации
-                string errorMessage = "Ошибки валидации:\n";
-                foreach (var validationErrors in ex.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        errorMessage += $"- {validationError.PropertyName}: {validationError.ErrorMessage}\n";
-                    }
-                }
-                MessageBox.Show(errorMessage, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.DialogResult = DialogResult.None;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения: {ex.Message}\n\nТип ошибки: {ex.GetType().Name}", "Ошибка",
+                MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.DialogResult = DialogResult.None;
+                this.DialogResult = DialogResult.None; // Не закрываем форму при ошибке
             }
         }
 
         private bool IsNewEntity()
         {
             var idProperty = entity.GetType().GetProperty("ID") ??
-                  entity.GetType().GetProperty($"{entity.GetType().Name}ID") ??
-                  entity.GetType().GetProperties()
-                        .FirstOrDefault(p => p.Name.EndsWith("ID") && p.PropertyType == typeof(int));
+                           entity.GetType().GetProperty($"{entity.GetType().Name}ID");
 
             if (idProperty != null)
             {
@@ -391,32 +318,12 @@ namespace SmartphoneDefectsDatabase
         {
             switch (tableName)
             {
-                case "Parties":
-                    dbContext.Parties.Add((Party)entity);
-                    break;
-                case "Smartphones":
-                    dbContext.Smartphones.Add((Smartphone)entity);
-                    break;
-                case "Controllers":
-                    dbContext.Controllers.Add((Controller)entity);
-                    break;
-                case "Screens":
-                    dbContext.Screens.Add((Screen)entity);
-                    break;
-                case "Defects":
-                    dbContext.Defects.Add((Defect)entity);
-                    break;
-                case "Images":
-                    dbContext.Images.Add((Image)entity);
-                    break;
-                case "Roles":
-                    dbContext.Roles.Add((Role)entity);
-                    break;
-                case "Users":
-                    dbContext.Users.Add((User)entity);
-                    break;
-                default:
-                    throw new ArgumentException($"Неизвестная таблица: {tableName}");
+                case "Smartphones": dbContext.Smartphones.Add((Smartphone)entity); break;
+                case "Screens": dbContext.Screens.Add((Screen)entity); break;
+                case "Defects": dbContext.Defects.Add((Defect)entity); break;
+                case "Parties": dbContext.Parties.Add((Party)entity); break;
+                case "Controllers": dbContext.Controllers.Add((Controller)entity); break;
+                case "Images": dbContext.Images.Add((Image)entity); break;
             }
         }
 
@@ -433,7 +340,15 @@ namespace SmartphoneDefectsDatabase
                 }
                 else if (control is DateTimePicker dateTimePicker)
                 {
-                    return dateTimePicker.Value;
+                    // Проверяем, что дата в допустимом диапазоне
+                    if (dateTimePicker.Value >= dateTimePicker.MinDate && dateTimePicker.Value <= dateTimePicker.MaxDate)
+                    {
+                        return dateTimePicker.Value;
+                    }
+                    else
+                    {
+                        return DateTime.Today; // Возвращаем текущую дату если значение вне диапазона
+                    }
                 }
                 else if (control is CheckBox checkBox)
                 {
@@ -443,7 +358,7 @@ namespace SmartphoneDefectsDatabase
                 {
                     return Convert.ChangeType(numericUpDown.Value, targetType);
                 }
-                
+
                 return null;
             }
             catch
