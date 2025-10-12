@@ -273,7 +273,6 @@ public class DefectContext : DbContext
     {
         modelBuilder.Conventions.Remove<System.Data.Entity.ModelConfiguration.Conventions.PluralizingTableNameConvention>();
 
-        // Явно указываем имена таблиц
         modelBuilder.Entity<Party>().ToTable("Party");
         modelBuilder.Entity<Smartphone>().ToTable("Smartphone");
         modelBuilder.Entity<Controller>().ToTable("Controller");
