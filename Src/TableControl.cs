@@ -96,8 +96,8 @@ namespace SmartphoneDefectsDatabase1
                     case "Defects":
                         dataGridView.DataSource = dbContext.Defects.Include(d => d.Screen).ToList();
                         break;
-                    case "Parties":
-                        dataGridView.DataSource = dbContext.Parties.ToList();
+                    case "Party":
+                        dataGridView.DataSource = dbContext.Party.ToList();
                         break;
                     case "Controllers":
                         dataGridView.DataSource = dbContext.Controllers.ToList();
